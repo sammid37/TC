@@ -1,14 +1,7 @@
 # Projeto final, Teoria da Computação, tema 1
 # Samantha Medeiros e Christopher Tavares
-# 21 de junho de 2021
-'''
-Importar biblioteca do python Beautiful Soup
-Requisitos do programa:
-* Listar os tópicos do índice do artigo #* classes toctitle toclevel-1 tocsection-
-* Listar todos os nomes de arquivos de imagens presentes no artigo #* classes thumbcaption
-* Listar todas as referências bibliográficas disponíveis na página #* classes mw-references-wrap references 
-* Listar todos os links para outros artigos da Wikipedia citados no conteúdo do artigo
-'''
+# 01 de julho de 2021
+
 import re
 import requests
 from bs4 import BeautifulSoup
@@ -42,6 +35,7 @@ content = response.content
 artigoWiki = BeautifulSoup(content, 'html.parser')
 
 #! Fazendo a busca dentro do HTML
+# extraindo trechos do HTML para serem utlizados para testes de expressões regulares
 #~ Fazendo a busca dos tópicos
 # topicos = artigoWiki.find('div', attrs={'class':'toc'})
 # print(topicos.text)
