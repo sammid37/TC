@@ -30,9 +30,10 @@ print("Status code:", response.status_code)
 conteudoWiki = response.content
 artigoWiki = BeautifulSoup(conteudoWiki, 'html.parser')
 
-# Exibindo o assunto do artigo Wikipedia utilizando re
-assunto = re.findall("\<(h1)\s(id)\=\"(firstHeading)\"\s(class)\=\"(firstHeading)\"\>\<(i)\>(.*)\<\/(i)\>\<\/(h1)\>", str(artigoWiki))
-print(f"Estamos visitando o artigo: {assunto}") 
+# Exibindo o tema do artigo
+assunto = artigoWiki.find('h1', {"class": re.compile("^firstHeading")})
+print(type(assunto))
+print(f"Estamos visitando uma página da Wikipedia sobre: {assunto.get_text()}")
 
 #~ Fazendo a busca dos tópicos
 # a busca irá retornar um vetor no qual cada posição armazena uma tupla
@@ -64,31 +65,65 @@ print()
 #~ Fazendo a busca dos links externos
 # Existem diversos padrões de links no corpo do artigo da wikipedia
 # Alguns possuem classes, outros não, aluns redirecionam para artigos existentes(links azuis) e outros não(links vermelhos)
-links1 = re.findall("\<(a) (href)\=\"\/(wiki)\/\S*\" (class)\=\"(mw-redirect)\" (title)\=\"(.*)\"\>(.*)\<\/(a)\>", conteudoWiki.decode("utf-8")) # class mw-redirect, href = /wiki/
-links2 = re.findall("\<(a) (href)\=\"\/(wiki)\/\S*\" (class)\=\"(mw-redirect)\" (title)\=\"\"\>(.*)\<\/(a)\>", str(artigoWiki))
-links3 = re.findall("\<(a) (href)\=\"\/(wiki)\/(\S*)\" (title)\=\"(.*)\"\>(.*)\<\/(a)\>", str(artigoWiki)) # # sem classe, href = /wiki/
-links4 = re.findall("\<(a) (href)\=\"\/(wiki)\/(\S*)\" (title)\=\"\"\>(.*)\<\/(a)\>", str(artigoWiki)) # title vazio, href = /wiki/
-links5 = re.findall("\<(a) (href)\=\"\/(w)\/\S*\" (class)\=\"(new)\" (title)\=\"(.*)\"\>(.*)\<\/(a)\>", str(artigoWiki)) # class new, href = /w/
+links1 = re.findall("\<(a) (href)\=\"\/(wiki)\/\S*\" (class)\=\"(mw-redirect)\" (title)\=\"([^\"\>\<]*)\"\>([^\"\>\<]*)\<\/(a)\>", conteudoWiki.decode("utf-8")) # class mw-redirect, href = /wiki/, title="algumacoisa"
+links2 = re.findall("\<(a) (href)\=\"\/(wiki)\/\S*\" (title)\=\"\"\>([^\"\<\>]*)\<\/(a)>", conteudoWiki.decode("utf-8")) # sem classe, href=/wiki/, title=""
+links3 = re.findall("\<(a) (href)\=\"\/(wiki)\/\S*\" (title)\=\"([^\"\>\<]*)\"\>([^\"\>\<]*)\<\/(a)\>", conteudoWiki.decode("utf-8")) # # sem classe, href = /wiki/, title="alguma coisa"
+links4 = re.findall("\<(a) (href)\=\"\/(w)\/\S*\" (class)\=\"(new)\" (title)\=\"([^\"\>\<]*)\"\>([^\"\>\<]*)\<\/(a)\>", conteudoWiki.decode("utf-8")) # class new, href = /w/
+links5 = re.findall("\<(a) (href)\=\"\/(w)\/\S*\" (class)\=\"(new)\" (title)\=\"\"\>([^\"\>\<]*)\<\/(a)\>", conteudoWiki.decode("utf-8"))
+
 cont1 = 0
 cont2 = 0
 cont3 = 0
 cont4 = 0
 cont5 = 0
 
-#print("Exibindo os links do artigo: ")
-# print(links1)
-# print(links2)
+print("Exibindo os links do artigo: ")
+print("LINKS 1")
+for i in links1:
+    cont1 += 1
+    print(i)
+print(f"Encontrei {cont1} links na categoria 1")
+print()
 
-#print("LINKS 1")
-#for i in links1:
-    #print(i)
+print("LINKS 2")
+for i in links2:
+    cont2 += 1
+    print(i)
+print(f"Encontrei {cont2} links na categoria 2")
+print()
+
+print("LINKS 3")
+for i in links3:
+    cont3 += 1
+    print(i)
+print(f"Encontrei {cont3} links na categoria 3")
+print()
+
+print("LINKS 4")
+for i in links4:
+    cont4 += 1
+    print(i)
+print(f"Encontrei {cont4} links na categoria 4")
+print()
+
+print("LINKS 5")
+for i in links5:
+    cont5 += 1
+    print(i)
+print(f"Encontrei {cont5} links na categoria 5")
+print()
+
+# print("LINKS 1")
 # for i in range(len(links1)):
 #     for j in range(len(links1[i])):
-#         # if j == 7:
-#         #     cont1 += 1
-#         print(links1[i][j])
+#         if j == 7:
+#             cont1 += 1
+#             print(links1[i][j])
 # print(f"Foram encontrados {cont1} links da categoria 1")
-#print()
+# print()
+# print()
+# for i in links2:
+#     print(i)
 # print("LINKS 2")
 # for i in range (len(links2)):
 #     for j in range (len(links2[i])):
@@ -119,5 +154,6 @@ cont5 = 0
 #         if j == 7:
 #             cont5 += 1
 #             print(links5[i][j])
-# print(f"Foram encontrados {cont5} links da categoria 4")
+# print(f"Foram encontrados {cont5} links da categoria 5")
 # print()
+
