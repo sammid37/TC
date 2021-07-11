@@ -1,6 +1,6 @@
 # Projeto final, Teoria da Computação, tema 1
 # Samantha Medeiros e Christopher Tavares
-# 10 de julho de 2021
+# 11 de julho de 2021
 
 import re
 import requests
@@ -21,37 +21,35 @@ while(True):
     else:
         print("Esta URL não pertence ao domínio da Wikipedia. Tente novamente.")
 
-# Exibindo o assunto do artigo Wikipedia utilizando re
-assunto = re.search(r'\/(wiki)\/\S*', wikipediaURL)
-print(f"Estamos visitando o artigo: {assunto.group()}") 
-
-response = requests.get(wikipediaURL)
+response = requests.get(wikipediaURL) # realizando requisição para acessar a página
 
 # Obtendo o HTTP Status Code
 print("Status code:", response.status_code)
 
 # fazendo a conversão do objeto para fazer uma busca dentro do conteúdo HTML
-# ! renomear content e artigoWiki(fazer relacionado ao bs4)
-content = response.content
-artigoWiki = BeautifulSoup(content, 'html.parser')
+conteudoWiki = response.content
+artigoWiki = BeautifulSoup(conteudoWiki, 'html.parser')
 
+# Exibindo o assunto do artigo Wikipedia utilizando re
+assunto = re.findall("\<(h1)\s(id)\=\"(firstHeading)\"\s(class)\=\"(firstHeading)\"\>\<(i)\>(.*)\<\/(i)\>\<\/(h1)\>", str(artigoWiki))
+print(f"Estamos visitando o artigo: {assunto}") 
 
 #~ Fazendo a busca dos tópicos
-topicos = re.findall("\<(span) (class)\=\"(toctext)\"\>(\S*)\<\/(span)\>",content.decode("utf-8"))
+# a busca irá retornar um vetor no qual cada posição armazena uma tupla
+# A busca é realizada com o padrão e uma string (conteudoWiki.decode("utf-8"))
+topicos = re.findall("\<(span) (class)\=\"(toctext)\"\>(.*)\<\/(span)\>",str(artigoWiki))
+cont_topicos = 0
 
 print("Os tópicos da wikipedia foram encontrados!")
+# Imprimindo todas as posições do vetor onde a posição da tupla contém o tópico escrito
 for i in range(len(topicos)):
     for j in range(len(topicos[i])):
         if (j == 3):
+            cont_topicos += 1
             print(topicos[i][j], end=' ')
     print()
-
-
-# print("Listando os tópicos do artigo: ")
-# div_topicos = artigoWiki.find('div', attrs={'class':'toc'})
-# topicos = div_topicos.find_all('span', {'class':re.compile(r'(class)\=\"(toctext")\>(\w*)')})
-# print(topicos)
-
+print(f"Foram encontrados {cont_topicos} itens no índice do artigo.")
+print()
 # #~ Fazendo a busca dos arquivos de imagem
 # print("Listando os imagens do artigo: ")
 
@@ -64,12 +62,62 @@ for i in range(len(topicos)):
 
 
 #~ Fazendo a busca dos links externos
-# \<(a) (href)\=\"\/(wiki)\/\S*\" (class)\=\"(mw-redirect)\" (title)\=\"\S*\"\>(\S*)\<\/(a)\>
-# soup.find_all('a', {'href': re.compile(r'crummy\.com/')})
-links_externos = artigoWiki.find_all('a',{'href':re.compile(r'\/(wiki)\/\w*')})
-print(links_externos)
+# Existem diversos padrões de links no corpo do artigo da wikipedia
+# Alguns possuem classes, outros não, aluns redirecionam para artigos existentes(links azuis) e outros não(links vermelhos)
+links1 = re.findall("\<(a) (href)\=\"\/(wiki)\/\S*\" (class)\=\"(mw-redirect)\" (title)\=\"(.*)\"\>(.*)\<\/(a)\>", conteudoWiki.decode("utf-8")) # class mw-redirect, href = /wiki/
+links2 = re.findall("\<(a) (href)\=\"\/(wiki)\/\S*\" (class)\=\"(mw-redirect)\" (title)\=\"\"\>(.*)\<\/(a)\>", str(artigoWiki))
+links3 = re.findall("\<(a) (href)\=\"\/(wiki)\/(\S*)\" (title)\=\"(.*)\"\>(.*)\<\/(a)\>", str(artigoWiki)) # # sem classe, href = /wiki/
+links4 = re.findall("\<(a) (href)\=\"\/(wiki)\/(\S*)\" (title)\=\"\"\>(.*)\<\/(a)\>", str(artigoWiki)) # title vazio, href = /wiki/
+links5 = re.findall("\<(a) (href)\=\"\/(w)\/\S*\" (class)\=\"(new)\" (title)\=\"(.*)\"\>(.*)\<\/(a)\>", str(artigoWiki)) # class new, href = /w/
+cont1 = 0
+cont2 = 0
+cont3 = 0
+cont4 = 0
+cont5 = 0
 
+#print("Exibindo os links do artigo: ")
+# print(links1)
+# print(links2)
 
-#  Validando a URL com Regular Expressions
-#     formato_aceito = re.compile('(https)\:\/\/(..)\.(wikipedia)\.(org)\/(wiki)\/(\S*)')
-#     url_aceita = formato_aceito.match(wikipediaURL)
+#print("LINKS 1")
+#for i in links1:
+    #print(i)
+# for i in range(len(links1)):
+#     for j in range(len(links1[i])):
+#         # if j == 7:
+#         #     cont1 += 1
+#         print(links1[i][j])
+# print(f"Foram encontrados {cont1} links da categoria 1")
+#print()
+# print("LINKS 2")
+# for i in range (len(links2)):
+#     for j in range (len(links2[i])):
+#         if j == 7:
+#             cont2 += 1
+#             print(links2[i][j])
+# print(f"Foram encontrados {cont2} links da categoria 2")
+# print()
+# print("LINKS 3")
+# for i in range (len(links3)):
+#     for j in range (len(links3[i])):
+#         if j == 6:
+#             cont3 += 1
+#             print(links3[i][j])
+# print(f"Foram encontrados {cont3} links da categoria 3")
+# print()
+# print("LINKS 4")
+# for i in range (len(links4)):
+#     for j in range (len(links4[i])):
+#         if j == 5:
+#             cont4 += 1
+#             print(links4[i][j])
+# print(f"Foram encontrados {cont4} links da categoria 4")
+# print()
+# print("LINKS 5")
+# for i in range (len(links5)):
+#     for j in range (len(links5[i])):
+#         if j == 7:
+#             cont5 += 1
+#             print(links5[i][j])
+# print(f"Foram encontrados {cont5} links da categoria 4")
+# print()
