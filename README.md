@@ -6,7 +6,7 @@ O intuito deste Web Scrapper é extrair informações da página do artigo utili
 # Requisitos do programa:
 * Listar os tópicos do índice do artigo 
 * Listar todos os nomes de arquivos de imagens presentes no artigo 
-*~~Listar todas as referências bibliográficas disponíveis na página
+* ~~Listar todas as referências bibliográficas disponíveis na página(removido pelo professor)
 * Listar todos os links para outros artigos da Wikipedia citados no conteúdo do artigo
 ## Outras funcionalidades
 * Verifica se a URL digitada pertence ao domínio da Wikipedia
