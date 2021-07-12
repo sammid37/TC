@@ -52,28 +52,32 @@ print(f"Foram encontrados {cont_topicos} itens no índice do artigo.")
 print()
 
 # #~ Fazendo a busca dos arquivos de imagem
-# print("Listando os imagens do artigo: ")
+print("Listando os imagens do artigo: ")
 
-# imagens_info_box = artigoWiki.find('div',attrs={'class':'floatnone'})
-# print(imagens_info_box.prettify())
+# irá imprimir o atributo title presente no link da tag a que contem uma tag img
+# O tipo de imagem pode ser: (png|jpg|jpeg|jfif|gif|bmp|tiff|exif|raw|webp|svg)
+imagens = re.findall("\<(a) (href)\=\"\/wiki\/Ficheiro\:(\S*)\" (class)\=\"(image)\" (title)\=\"([^\"\<\>]*)\"\>\<(img) (alt)\=\"\" (src)\=\"([^\"\<\>]*\.(png|jpg|jpeg|jfif|gif|bmp|tiff|exif|raw|webp|svg))\" (.*)\<\/(a)\>", conteudoWiki.decode("utf-8")) # class mw-redirect, href = /wiki/, title="algumacoisa"
+album = []
 
-# # Será necessário utilizar um for para encontrar todas as imagens
-# imagens_content = artigoWiki.find('div', class_='thumbinner')
-# print(imagens_content.prettify())
+for i in range(len(imagens)):
+    for j in range(len(imagens[i])):
+        if j == 2:
+            print(f"O nome do arquivo de imagem é: {imagens[i][j]}")
+            album.append(imagens[i][j])
 
 
 #~ Fazendo a busca dos links externos
 # Existem diversos padrões de links no corpo do artigo da wikipedia
 # Alguns possuem classes, outros não, aluns redirecionam para artigos existentes(links azuis) e outros não(links vermelhos)
 links1 = re.findall("\<(a) (href)\=\"\/(wiki)\/\S*\" (class)\=\"(mw-redirect)\" (title)\=\"([^\"\>\<]*)\"\>([^\"\>\<]*)\<\/(a)\>", conteudoWiki.decode("utf-8")) # class mw-redirect, href = /wiki/, title="algumacoisa"
-links2 = re.findall("\<(a) (href)\=\"\/(wiki)\/\S*\" (title)\=\"\"\>([^\"\<\>]*)\<\/(a)>", conteudoWiki.decode("utf-8")) # sem classe, href=/wiki/, title=""
+# links2 = re.findall("\<(a) (href)\=\"\/(wiki)\/\S*\" (title)\=\"\"\>([^\"\<\>]*)\<\/(a)>", conteudoWiki.decode("utf-8")) # sem classe, href=/wiki/, title=""
 links3 = re.findall("\<(a) (href)\=\"\/(wiki)\/\S*\" (title)\=\"([^\"\>\<]*)\"\>([^\"\>\<]*)\<\/(a)\>", conteudoWiki.decode("utf-8")) # # sem classe, href = /wiki/, title="alguma coisa"
-links4 = re.findall("\<(a) (href)\=\"\/(w)\/\S*\" (class)\=\"(new)\" (title)\=\"([^\"\>\<]*)\"\>([^\"\>\<]*)\<\/(a)\>", conteudoWiki.decode("utf-8")) # class new, href = /w/
-links5 = re.findall("\<(a) (href)\=\"\/(w)\/\S*\" (class)\=\"(new)\" (title)\=\"\"\>([^\"\>\<]*)\<\/(a)\>", conteudoWiki.decode("utf-8"))
+links4 = re.findall("\<(a) (href)\=\"\/(w)\/\S*\" (class)\=\"(new)\" (title)\=\"([^\"\<\>]*)\"\>([^\"\<\>]*)\<\/(a)\>", conteudoWiki.decode("utf-8")) # class new, href = /w/
+# links5 = re.findall("\<(a) (href)\=\"\/(w)\/\S*\" (class)\=\"(new)\" (title)\=\"\"\>([^\"\>\<]*)\<\/(a)\>", conteudoWiki.decode("utf-8"))
 
+# criando listas vazias para armazenas títulos de artigos externos e inexistentes
 artigos_externos = []
 artigos_inexistente = []
-
 
 cont1 = 0
 cont2 = 0
@@ -95,19 +99,6 @@ else:
     print(f"Foram encontrados {cont1} links da categoria 1")
 print()
 
-print("LINKS 2")
-for i in range (len(links2)):
-    for j in range (len(links2[i])):
-        if j == 7:
-            cont2 += 1
-            artigos_externos.append(links2[i][j])
-            # print(links2[i][j])
-if cont2 == 0:
-    print("Não encontrei links que se encaixem com este formato")
-else:
-    print(f"Foram encontrados {cont2} links da categoria 2")
-print()
-
 print("LINKS 3")
 for i in range (len(links3)):
     for j in range (len(links3[i])):
@@ -124,33 +115,32 @@ print()
 print("LINKS 4")
 for i in range (len(links4)):
     for j in range (len(links4[i])):
-        if j == 8:
-            cont4 += 1
-            artigos_inexistente.append(links4[i][j])
-            # print(links4[i][j])
+        # if j == 8:
+        cont4 += 1
+        artigos_inexistente.append(links4[i][j])
+        print(links4[i][j])
 if cont4 == 0:
     print("Não encontrei links que se encaixem com este formato")
 else:
     print(f"Foram encontrados {cont4} links da categoria 4")
 print()
-
-print("LINKS 5")
-for i in range (len(links5)):
-    for j in range (len(links5[i])):
-        if j == 7:
-            cont5 += 1
-            artigos_inexistente.append(links5[i][j])
-            # print(links5[i][j])
-if cont5 == 0:
-    print("Não encontrei links que se encaixem com este formato")
-else:
-    print(f"Foram encontrados {cont5} links da categoria 5")
 print()
 
+# transformando as listas vazias em conjuntos que permitem a impressão de valores únicos
 ae = set(artigos_externos)
 ai = set(artigos_inexistente)
+# organizando em ordem alfabética :)
+sorted_ae = sorted(ae)
+sorted_ai = sorted(ai)
 
-for externo in ae:
-    print(f"{externo}")
-for inexistente in ai:
-    print(f"{inexistente}")
+print(f"Exibindo {len(ae)} títulos de artigos externos:")
+for externo in sorted_ae:
+    print(f"◉ {externo}")
+print()
+print(f"Exibindo {len(ai)} títulos de artigos inexistentes:")
+for inexistente in sorted_ai:
+    print(f"◉ {inexistente}")
+print()
+print()
+
+print("Fim do programa :D")
