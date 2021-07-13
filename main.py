@@ -8,6 +8,7 @@ from bs4 import BeautifulSoup
 from exibir_topicos import exibir_topicos
 from exibir_imagens import exibir_imagens
 from exibir_links_externos import exibir_links_externos
+from exibir_referencias import exibir_referencias
 
 # Validando se a URL informada pertence ao domínio da Wikipedia
 while(True):
@@ -44,6 +45,7 @@ while(op):
     print("1 - exibir tópicos")
     print("2 - exibir imagens")
     print("3 - exibir links externos")
+    print("4 - exibir referências")
     print("0 - sair")
 
     op = input("Por favor informe uma opção: ")
@@ -55,7 +57,10 @@ while(op):
     elif(op == "2"):
         exibir_imagens(conteudoWiki)
     elif(op == "3"):
-        exibir_links_externos(conteudoWiki)
+        exibir_links_externos(conteudoWiki) 
+    elif(op == "4"):
+        exibir_referencias(artigoWiki)
+
     elif(op == "0"):
         print("Obrigado por usar o nosso programa.")
         op = False
